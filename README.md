@@ -10,7 +10,19 @@
 
 4. Configuração do serviço de Load Balancer AWS para a aplicação Wordpress.
 
-![1.0](png/print.png)
+Estágios do Projeto de forma resumida:
+
+1. Rodar o wordpress local ✅
+2. Criar a VPC, EC2 ✅
+3. Criou o RDS ✅
+4. Instalou o Docker na EC2 ✅
+5. Rodou o Wordpress na EC2 ✅
+6. Criou um script de inicialização no User Data e o testou ✅
+7. Criou o auto-scaling group e balanceador de Carga ❎
+8. Criou regras de scaling ❎
+9. Monitoramento no Cloudwatch ❎
+
+![1](png/print.png)
 
 ### Pontos de atenção:
 
@@ -48,7 +60,7 @@ https://code.visualstudio.com/download
 
 4 - Faça um conexão ao wsl.
 
-![1](png/base.png)
+![2](png/base.png)
 
 ```
 Assim que você entrar no vscode já com o wsl instalado ele vai te recomendar que baixe uma extensão chamada wsl, após a instalação você podera clicar no simbolo >< no canto inferior esquerdo e após isso é só apertar em "Connect to WSL" e estará dentro da maquina !! 
@@ -177,10 +189,10 @@ nano `docker-compose.yml`:
 ```
 services:
   web:
-    image: wordpress:php8.1-apache
+    image: wordpress
     restart: always
     ports:
-      - 8080:80
+      - "80:80"
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: cariani
@@ -229,12 +241,132 @@ volumes:
 
 9- Resultado.
 
-![2](png/Result.png)
+![3](png/Result.png)
+
 <br>
-![3](png/posinst.png)
+
+![4](png/posinst.png)
 
 
-### Terceira etapa: `AWS` Criação da topologia da rede e seus grupos de segurança.
+### Terceira etapa: `AWS` Criação da topologia da rede e seus grupos de segurança + Teste sem LB.
+
+1- Criar a VPC
+
+![5](png/vcp.png)
+
+2- Criar os grupos de segurança.
+
+![6](png/gpsg.png)
+
+3- Criar o banco de dados(RDS).
+
+```
+Especificações: 
+
+- RDS com MySQL, sem Multi-AZ e instâncias db.t3.micro
+
+----------------------------------------------------------------------------------------
+
+|- NAME DB 'db-wordpress'
+|-- NAME USER 'flavor'
+|-- PASSWORD '998049352'
+|--- DATABASE NAME 'db_projetinho'
+
+```
+![7](png/rds_mysql.png)
+
+![8](png/rds_gratuito.png)
+
+![9](png/rds_config.png)
 
 
+```
+Após a criação do banco de dados, RDS > escolha o seu banco > security > altere a regra de entrada pro grupo de segurança que vai estar sua ec2.
+```
 
+4- Criar uma EC2.
+
+![10](png/ec2_image.png)
+
+![11](png/ec2_network.png)
+
+![12](png/ec2_userdata.png)
+
+
+Documento utilizado no`userdata`:
+```
+#!/bin/bash
+set -e  # Encerra o script em caso de erro
+
+# Atualiza o sistema
+sudo apt update -y
+sudo apt upgrade -y
+
+# Instala as dependências
+sudo apt install -y ca-certificates curl gnupg wget
+
+# Configura o repositório do Docker
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Instala docker e o docker compose
+sudo apt update -y
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Instala o mysql-client para fazer o teste de conexão
+sudo apt install -y mysql-client
+
+# Adiciona usuário ao grupo Docker e aplica as permissões
+sudo usermod -aG docker $USER
+
+# Atualiza grupos sem precisar de novo login
+newgrp docker
+
+# Habilita e inicia o Docker
+sudo systemctl enable docker
+sudo systemctl start docker
+
+
+```
+
+5- Entar na EC2 via ssh.
+
+6- Baixar o *mysql-client* para testar a conectividade com o banco de dados
+
+```
+sudo apt install -y mysql-client
+
+----------------------------------------------------------------------------------------
+
+mysql -h [ENDEREÇO_DO_BANCO] -u [USUÁRIO] -p -e "SHOW DATABASES;"
+```
+
+nano `docker-compose.yml`: 
+```
+services:
+  web:
+    image: wordpress
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: db-wordpress.c98i000mqf2o.us-east-1.rds.amazonaws.com
+      WORDPRESS_DB_USER: flavor
+      WORDPRESS_DB_PASSWORD: 998049352
+      WORDPRESS_DB_NAME: db_projetinho
+    networks:
+      - tunel
+
+networks:
+  tunel:
+    driver: bridge
+```
+
+![13](png/rds_fim.png)
+
+### Quarta etapa: Aplicação do auto-scaling group e balanceador de carga com regras de scaling e o Cloudwatch.
