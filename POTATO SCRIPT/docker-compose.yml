@@ -1,0 +1,17 @@
+services:
+  web:
+    image: wordpress
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: db-wordpress.c98i000mqf2o.us-east-1.rds.amazonaws.com
+      WORDPRESS_DB_USER: flavor
+      WORDPRESS_DB_PASSWORD: 998049352
+      WORDPRESS_DB_NAME: db_projetinho
+    networks:
+      - tunel
+
+networks:
+  tunel:
+    driver: bridge
