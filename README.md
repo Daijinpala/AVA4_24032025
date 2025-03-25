@@ -10,7 +10,7 @@
 
 4. Configuração do serviço de Load Balancer AWS para a aplicação Wordpress.
 
-![[print.png]]
+![1.0](png/print.png)
 
 ### Pontos de atenção:
 
