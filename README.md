@@ -194,7 +194,7 @@ services:
     ports:
       - "80:80"
     environment:
-      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_HOST: dbm
       WORDPRESS_DB_USER: cariani
       WORDPRESS_DB_PASSWORD: 0311
       WORDPRESS_DB_NAME: projetinho
@@ -203,7 +203,7 @@ services:
     networks:
       - tunel
 
-  db:
+  dbm:
     image: mysql:8.0
     restart: always
     environment:
