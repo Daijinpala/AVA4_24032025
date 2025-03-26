@@ -1,5 +1,3 @@
-
-
 # Projeto:
 
 1. Instalação e configuração do DOCKER ou CONTAINERD no host EC2; SEGUIR DESENHO TOPOLOGIA DISPOSTA. `Ponto adicional para o trabalho utilizar a instalação via script deStart Instance (user_data.sh)`
@@ -10,7 +8,9 @@
 
 4. Configuração do serviço de Load Balancer AWS para a aplicação Wordpress.
 
-Estágios do Projeto de forma resumida:
+<hr>
+
+## Estágios do Projeto de forma resumida:
 
 1. Rodar o wordpress local ✅
 2. Criar a VPC, EC2 ✅
@@ -18,9 +18,9 @@ Estágios do Projeto de forma resumida:
 4. Instalou o Docker na EC2 ✅
 5. Rodou o Wordpress na EC2 ✅
 6. Criou um script de inicialização no User Data e o testou ✅
-7. Criou o auto-scaling group e balanceador de Carga ❎
-8. Criou regras de scaling ❎
-9. Monitoramento no Cloudwatch ❎
+7. Criou o auto-scaling group e balanceador de Carga ✅
+8. Criou regras de scaling ✅
+9. Monitoramento no Cloudwatch ✅
 
 ![1](png/print.png)
 
@@ -194,7 +194,7 @@ services:
     ports:
       - "80:80"
     environment:
-      WORDPRESS_DB_HOST: dbm
+      WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: cariani
       WORDPRESS_DB_PASSWORD: 0311
       WORDPRESS_DB_NAME: projetinho
@@ -203,7 +203,7 @@ services:
     networks:
       - tunel
 
-  dbm:
+  db:
     image: mysql:8.0
     restart: always
     environment:
@@ -369,4 +369,81 @@ networks:
 
 ![13](png/rds_fim.png)
 
-### Quarta etapa: Aplicação do auto-scaling group e balanceador de carga com regras de scaling e o Cloudwatch.
+### Quarta etapa: Aplicação do auto-scaling group com balanceador de carga, regras de scaling e CloudWatch.
+
+1- Criar uma `VPC` (apagar todas as outras existentes para maior facilidade).
+
+![14](png/vpc.png)
+
+**IMPORTANTE**: Acessar a subnetes publicas e colocar para elas o ipv4 publico automaticamente.
+
+2- Criar um grupo de segurança para os servidores web.
+
+`sg_webservers:`
+![15](png/sgweb-entrada.png)
+![16](png/sgweb-saida.png)
+
+3- Cria um target group para o `ALB`.
+
+![17](png/tg-alb.png)
+
+4- Criar um grupo de segurança para o `ALB`.
+
+`sg_alb`:
+![18](png/sgalb-entrada.png)
+![19](png/sgalb-saida.png)
+
+5- Criar um `Launch template`.
+
+![20](png/lt_1.png)
+![21](png/lt_2.png)
+![22](png/lt_3.png)
+
+6- Faça um `ASG` com o `ALB`
+
+![23](png/asg-1.png)
+
+<hr>
+
+![24](png/asg-2.png)
+
+<hr>
+
+![25](png/asg-3.png)
+![26](png/asg-3.1.png)
+![27](png/asg-3.2.png)
+
+<hr>
+
+![28](png/asg-4.png)
+![29](png/asg-4.1.png)
+![30](png/asg-4.2.png)
+![31](png/asg-4.3.png)
+
+<hr>
+
+![31](png/asg-6.png)
+
+<hr>
+
+7- Verifique se foi criada as instancias.
+
+![32](png/f1.png)
+
+8- Tente acessar o Wordpress pelo IP publico das maquinas.
+
+EC2 1 IP: 54.86.187.15
+
+![33](png/f2.png)
+
+EC2 2 IP: 3.89.221.227
+
+![34](png/f3.png)
+
+9- Tente entrar pelo DNS do `LB`.
+
+![35](png/f4.png)
+
+10- Analisar os dados no `CloudWatch`.
+
+![35](png/cloudwatch.png)
