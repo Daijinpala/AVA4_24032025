@@ -421,7 +421,7 @@ networks:
 4- Criar o banco de dados(RDS).
 
 ```
-Cria do mesmo jeito do teste anterior, só que agora você faz um novo grupo de segurança durante a criação do banco de dados, do qual a regra de entrada é apontando para o grupo de segurança do wordpress (importante salientar que se criar deste jeito, quando apagar o banco de dados até o grupo de segurança vai embora)
+Cria do mesmo jeito que o teste anterior.
 ```
 
 5- Cria um target group para o `ALB`.
