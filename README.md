@@ -478,3 +478,127 @@ EC2 2 IP: 3.89.221.227
 ![35](png/cloudwatch.png)
 
 </div>
+
+### EFS on Linux
+
+<div>
+<details align="left">
+    <summary></summary>
+
+1- Criar o grupo de segurança para o EFS
+
+![00](png/efs-entrada.png)
+![01](png/efs-saida.png)
+
+2- Criar um EFS.
+
+![02](png/efs-cri-2.png)
+![03](png/efs-cri-2.1.png)
+
+
+<hr>
+
+![04](png/efs-cri-3.png)
+![05](png/efs-cri-fim.png)
+
+<hr>
+3- Montagem manualmente da pasta
+
+![06](png/mount-1.png)
+![07](png/mount-2.png)
+
+4- Entrar na EC2 via ssh
+
+5- Instale os pacotes necessários
+
+Documentação Linux: https://docs.aws.amazon.com/pt_br/efs/latest/ug/using-amazon-efs-utils.html
+Documentação oficial para outras distribuições: https://docs.aws.amazon.com/pt_br/efs/latest/ug/installing-amazon-efs-utils.html (não funciona, testei somente na distribuição do ubuntu)
+
+no `Linux`:
+```
+sudo yum install amazon-efs-utils -y
+```
+
+![08](png/dw-efs.png)
+
+no `Ubuntu`:
+```
+$ sudo apt-get update
+$ sudo apt-get -y install git binutils rustc cargo pkg-config libssl-dev gettext
+$ git clone https://github.com/aws/efs-utils
+$ cd efs-utils
+$ ./build-deb.sh
+$ sudo apt-get -y install ./build/amazon-efs-utils*deb
+```
+
+6- Monte uma pasta
+
+```
+Crie uma pasta para fazer a montagem
+
+mkdir wordpress
+
+Cole o que copiamos do nosso efs para um montagem manual
+
+Exemplo: sudo mount -t efs -o tls fs-06887e858d43acc91:/ wordpress
+```
+
+![09](png/efs-mount-ec2.png)
+
+7- Execute o Wordpress e seja feliz
+
+nano `docker-compose.yml`:
+```
+services:
+  web:
+    image: wordpress
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: 
+      WORDPRESS_DB_USER: flavor
+      WORDPRESS_DB_PASSWORD: 998049352
+      WORDPRESS_DB_NAME: db_projetinho
+    volumes:
+      - /home/ec2-user/wordpress:/var/www/html
+    networks:
+      - tunel
+
+networks:
+  tunel:
+    driver: bridge
+```
+
+comando pra executar o container 
+```
+Linux:
+docker-compose up -d
+
+---------------------------------------------------------
+Ubuntu:
+docker compose up -d
+```
+Antes de executar o wordpress:
+![010](png/teste-efs-1.png)
+
+<hr>
+
+Executando a instalação do wordpress:
+![011](png/PósInst.png)
+
+No monitoramento:
+![012](png/monitoraefs.png)
+
+Conteúdo na pasta:
+![013](png/conteudopasta.png)
+
+- Testando em uma Ec2 em outra região
+
+Adicione a região nas configurações de rede do EFS:
+![014](png/testeec2azB.png)
+
+Após isso é só entrar na outra ec2, criar uma pasta com o mesmo nome e por fim entrar nela e verificar se o conteúdo está lá:
+![015](png/férias.png)
+
+</div>
