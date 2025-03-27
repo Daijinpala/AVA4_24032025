@@ -438,6 +438,60 @@ Cria do mesmo jeito que o teste anterior.
 
 ![20](png/lt_1.png)
 ![21](png/lt_2.png)
+
+`Userdata` utilizado:
+```
+#!/bin/bash
+
+echo "Atualizando repositórios e instalando atualizações"
+sudo yum update -y
+
+sudo yum install docker -y
+
+sudo yum install wget -y
+
+sudo yum install curl -y
+
+sudo yum install amazon-efs-utils -y
+
+echo "Repositórios e atualizações instalados"
+ 
+echo "Habilitando Docker como serviço e passando usuário pro grupo docker"
+sudo service docker start
+sudo systemctl enable docker.service
+sudo usermod -aG docker ec2-user
+echo "Docker habilitado e usuário passado para o grupo docker"
+
+echo "Testando instalação Docker"
+docker --version
+echo "Docker testado"
+
+echo "Instalando Docker compose" 
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+echo "Instalação feita"
+
+echo "Permissionamento do docker-compose sendo executado"
+sudo chmod +x /usr/local/bin/docker-compose
+echo "Permisisonamento feito"
+
+echo "Criação de pasta wordpress"
+sudo mkdir wordpress
+echo "Pasta criada COM SUCESSO"
+
+echo "MONTAGEM SENDO FEITA NO EFS"
+sudo mount -t efs -o tls fs-06887e858d43acc91:/ wordpress
+echo "MONTAGEM FEITA COM SUCESSO"
+
+echo "Requisitando arquivo docker-compose.yml"
+wget https://raw.githubusercontent.com/Daijinpala/AVA4_24032025/refs/heads/main/POTATO%20SCRIPT/docker-compose.yml
+echo "Arquivo docker-compose.yml requisitado"
+
+echo "Executando docker-compose up"
+cd /home/ec2-user/docker-compose.yml
+sudo docker-compose up -d
+echo "Docker compose executado corretamente!"
+```
+
 ![22](png/lt_3.png)
 
 8- Faça um `ASG` com o `ALB`
