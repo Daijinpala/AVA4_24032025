@@ -383,29 +383,36 @@ networks:
 ![15](png/sgweb-entrada.png)
 ![16](png/sgweb-saida.png)
 
-3- Criar o banco de dados(RDS).
+3- Criar o grupo de segurança RDS.
+
+`sg_mysql:`
+![f1](png/rds-entrada.png)
+![f2](png/rds-saida.png)
+
+
+4- Criar o banco de dados(RDS).
 
 ```
 Cria do mesmo jeito do teste anterior, só que agora você faz um novo grupo de segurança durante a criação do banco de dados, do qual a regra de entrada é apontando para o grupo de segurança do wordpress (importante salientar que se criar deste jeito, quando apagar o banco de dados até o grupo de segurança vai embora)
 ```
 
-4- Cria um target group para o `ALB`.
+5- Cria um target group para o `ALB`.
 
 ![17](png/tg-alb.png)
 
-5- Criar um grupo de segurança para o `ALB`.
+6- Criar um grupo de segurança para o `ALB`.
 
 `sg_alb`:
 ![18](png/sgalb-entrada.png)
 ![19](png/sgalb-saida.png)
 
-6- Criar um `Launch template`.
+7- Criar um `Launch template`.
 
 ![20](png/lt_1.png)
 ![21](png/lt_2.png)
 ![22](png/lt_3.png)
 
-7- Faça um `ASG` com o `ALB`
+8- Faça um `ASG` com o `ALB`
 
 ![23](png/asg-1.png)
 
@@ -432,11 +439,11 @@ Cria do mesmo jeito do teste anterior, só que agora você faz um novo grupo de 
 
 <hr>
 
-8- Verifique se foi criada as instancias.
+9- Verifique se foi criada as instancias.
 
 ![32](png/f1.png)
 
-9- Tente acessar o Wordpress pelo IP publico das maquinas.
+10- Tente acessar o Wordpress pelo IP publico das maquinas.
 
 EC2 1 IP: 54.86.187.15
 
@@ -446,10 +453,10 @@ EC2 2 IP: 3.89.221.227
 
 ![34](png/f3.png)
 
-10- Tente entrar pelo DNS do `LB`.
+11- Tente entrar pelo DNS do `LB`.
 
 ![35](png/f4.png)
 
-11- Analisar os dados no `CloudWatch`.
+12- Analisar os dados no `CloudWatch`.
 
 ![35](png/cloudwatch.png)
