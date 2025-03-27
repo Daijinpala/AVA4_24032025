@@ -9,6 +9,8 @@ services:
       WORDPRESS_DB_USER: flavor
       WORDPRESS_DB_PASSWORD: 998049352
       WORDPRESS_DB_NAME: db_projetinho
+    volumes:
+      - /home/ec2-user/wordpress:/var/www/html
     networks:
       - tunel
 
