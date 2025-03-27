@@ -1,5 +1,5 @@
 # Projeto:
-
+```
 1. Instalação e configuração do DOCKER ou CONTAINERD no host EC2; SEGUIR DESENHO TOPOLOGIA DISPOSTA. `Ponto adicional para o trabalho utilizar a instalação via script deStart Instance (user_data.sh)`
 
 2. Efetuar Deploy de uma aplicação Wordpress com: container de aplicação RDS database Mysql. 
@@ -8,6 +8,7 @@
 
 4. Configuração do serviço de Load Balancer AWS para a aplicação Wordpress.
 
+```
 <hr>
 
 ## Estágios do Projeto de forma resumida:
@@ -28,17 +29,20 @@
 
 - Não utilizar ip público para saída do serviços WP (Evitem publicar o serviço WP via IP Público) 
 - Sugestão para o tráfego de internet sair pelo LB (Load Balancer Classic)
-- Pastas públicas e estáticos do wordpress sugestão deutilizar o EFS (Elastic File Sistem)
+- Pastas públicas e estáticos do wordpress sugestão de utilizar o EFS (Elastic File Sistem)
 - Fica a critério de cada integrante usar Dockerfile ou Dockercompose;
-- Necessáriodemonstrar a aplicação wordpress funcionando (tela de login) 
-- AplicaçãoWordpress precisa estar rodando na porta 80 ou 8080;
+- Necessário demonstrar a aplicação wordpress funcionando (tela de login) 
+- Aplicação Wordpress precisa estar rodando na porta 80 ou 8080;
 - Utilizar repositório git para versionamento; 
 - Criar documentação.
 
 ## Conclusão:
 
-### Primeira etapa: Criação do ambiente de testes.
+### Primeira etapa `local`: Criação do ambiente de testes.
 
+<div>
+<details align="left">
+    <summary></summary>
 1 - Baixe o wsl (Pela loja da Microsoft || Por linha de comando).
 
 ```
@@ -105,9 +109,13 @@ sudo systemctl start docker
 6- Adicione seu usuário ao grupo `docker` (Opcional).
 7- Habilite o Docker para iniciar com o sistema (Opcional).
 ```
+</div>
 
-### Segunda etapa: Teste de implementação do *Wordpress* localmente.
+### Segunda etapa `local`: Teste de implementação do *Wordpress*.
 
+<div>
+<details align="left">
+    <summary></summary>
 1-  Criar uma abstração dos volumes e redes (Opcional).
 
 ```
@@ -246,10 +254,13 @@ volumes:
 <br>
 
 ![4](png/posinst.png)
+</div>
 
+### Primeira etapa `AWS`: Criação da topologia da rede e seus grupos de segurança com teste sem ALB && ASG.
 
-### Terceira etapa: `AWS` Criação da topologia da rede e seus grupos de segurança + Teste sem LB.
-
+<div>
+<details align="left">
+    <summary></summary>
 1- Criar a VPC
 
 ![5](png/vcp.png)
@@ -369,8 +380,13 @@ networks:
 
 ![13](png/rds_fim.png)
 
-### Quarta etapa: Aplicação do auto-scaling group com balanceador de carga, regras de scaling e CloudWatch.
+</div>
 
+### Segunda etapa `AWS`: Aplicação do auto-scaling group com balanceador de carga, regras de scaling e CloudWatch.
+
+<div>
+<details align="left">
+    <summary></summary>
 1- Criar uma `VPC` (apagar todas as outras existentes para maior facilidade).
 
 ![14](png/vpc.png)
@@ -460,3 +476,5 @@ EC2 2 IP: 3.89.221.227
 12- Analisar os dados no `CloudWatch`.
 
 ![35](png/cloudwatch.png)
+
+</div>
