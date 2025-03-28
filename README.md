@@ -308,53 +308,30 @@ Documento utilizado no`userdata`:
 ```
 #!/bin/bash
 
-echo "Atualizando repositórios e instalando atualizações"
-sudo yum update -y
-
-sudo yum install docker -y
-
-sudo yum install wget -y
-
-sudo yum install curl -y
-
-sudo yum install amazon-efs-utils -y
-
-echo "Repositórios e atualizações instalados"
+ sudo apt update -y
+ sudo apt upgrade -y
  
-echo "Habilitando Docker como serviço e passando usuário pro grupo docker"
-sudo service docker start
-sudo systemctl enable docker.service
-sudo usermod -aG docker ec2-user
-echo "Docker habilitado e usuário passado para o grupo docker"
-
-echo "Testando instalação Docker"
-docker --version
-echo "Docker testado"
-
-echo "Instalando Docker compose" 
-sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-echo "Instalação feita"
-
-echo "Permissionamento do docker-compose sendo executado"
-sudo chmod +x /usr/local/bin/docker-compose
-echo "Permisisonamento feito"
-
-echo "Criação de pasta wordpress"
-sudo mkdir wordpress
-echo "Pasta criada COM SUCESSO"
-
-echo "MONTAGEM SENDO FEITA NO EFS"
-sudo mount -t efs -o tls fs-06887e858d43acc91:/ wordpress
-echo "MONTAGEM FEITA COM SUCESSO"
-
-echo "Requisitando arquivo docker-compose.yml"
-wget https://raw.githubusercontent.com/Daijinpala/AVA4_24032025/refs/heads/main/POTATO%20SCRIPT/docker-compose.yml
-echo "Arquivo docker-compose.yml requisitado"
-
-echo "Executando docker-compose up"
-cd /home/ec2-user/docker-compose.yml
-sudo docker-compose up -d
-echo "Docker compose executado corretamente!"
+ sudo apt install -y ca-certificates curl gnupg wget
+ 
+ sudo install -m 0755 -d /etc/apt/keyrings
+ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+ sudo chmod a+r /etc/apt/keyrings/docker.gpg
+ 
+ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+ 
+ sudo apt update -y
+ sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+ 
+ sudo apt install -y mysql-client
+ 
+ sudo usermod -aG docker $USER
+ 
+ newgrp docker
+ 
+ sudo systemctl enable docker
+ sudo systemctl start docker
 ```
 
 5- Entar na EC2 via ssh.
