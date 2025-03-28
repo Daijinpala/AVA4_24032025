@@ -623,7 +623,7 @@ networks:
 
 ![aws_doc](png/rep2.png)
 
-9)  `Após terminar os testes reduza o numero de maquinas minimas e maximas para 0, ele mesmo vi encerrar as instancias, só que demora`
+9)  `Após terminar os testes reduza o numero de maquinas minimas e maximas para 0 no ASG (Auto Scaling Group), ele mesmo vai encerrar as instancias, só que demora`
 
 14- Teste.
 
