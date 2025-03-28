@@ -399,153 +399,253 @@ networks:
 <div>
 <details align="left">
     <summary></summary>
-1- Criar uma `VPC` (apagar todas as outras existentes para maior facilidade).
 
-![14](png/vpc.png)
+1 - Criar uma VPC.
 
-**IMPORTANTE**: Acessar a subnetes publicas e colocar para elas o ipv4 publico automaticamente.
+![aws_doc](png/projetinhovpc.png)
 
-2- Criar um grupo de segurança para os servidores web.
+2 - Fazer com que as Sub-redes publicas tenham o IP publico atribuído automaticamente
 
-`sg_webservers:`
-![15](png/sgweb-entrada.png)
-![16](png/sgweb-saida.png)
+![aws_doc](png/sub_1.png)
 
-3- Criar o grupo de segurança RDS.
+![aws_doc](png/sub_2.png)
 
-`sg_mysql:`
-![f1](png/rds-entrada.png)
-![f2](png/rds-saida.png)
+![aws_doc](png/sub_3.png)
 
+3- Criar um grupo de segurança para o servidor web (sem regras de entrada ou saída).
 
-4- Criar o banco de dados(RDS).
+4- Criar um grupo de segurança para o RDS (mysql).
 
-```
-Cria do mesmo jeito que o teste anterior.
-```
+![aws_doc](png/sg_rds-1.png)
 
-5- Cria um target group para o `ALB`.
+![aws_doc](png/sg_rds-2.png)
 
-![17](png/tg-alb.png)
+5- Criar um grupo de segurança para o EFS.
 
-6- Criar um grupo de segurança para o `ALB`.
+![aws_doc](png/sg_efs-1.png)
 
-`sg_alb`:
-![18](png/sgalb-entrada.png)
-![19](png/sgalb-saida.png)
+![aws_doc](png/sg_efs-2.png)
 
-7- Criar um `Launch template`.
+6- Criar um grupo de segurança para o ALB.
 
-![20](png/lt_1.png)
-![21](png/lt_2.png)
+![aws_doc](png/sg_alb-1.png)
 
-`Userdata` utilizado:
+![aws_doc](png/sg_alb-2.png)
+
+7- Editar o grupo de segurança do WebServer que está vazio (conterá nossa aplicação do wordpress).
+
+![aws_doc](png/sg_web-1.png)
+
+![aws_doc](png/sg_web-2.png)
+
+8- Criar o EFS.
+
+![aws_doc](png/efs-1.png)
+
+![aws_doc](png/efs-2.png)
+
+![aws_doc](png/efs-3.png)
+
+1) `Aperte para ir para próxima aba`
+
+2) `Selecionar o grupo de segurança do EFS criado anteriormente`
+
+![aws_doc](png/efs-4.png)
+
+3)  `Só avançar até terminar`
+
+![aws_doc](png/efs-5.png)
+
+9- Criar o RDS.
+
+1)  `Escolher a ultima versão disponível`
+
+![aws_doc](png/rds-1.png)
+
+2)  `Escolher o nivel gratuito`
+
+![aws_doc](png/rds-2.png)
+
+3)  `Guardar essas informações:`
+
+![aws_doc](png/rds-3.png)
+
+4)  `Mudar para t3 micro:`
+
+![aws_doc](png/rds-4.png)
+
+5)  `Alterar o limite maximo de armazenamento escalonavel:`
+
+![aws_doc](png/rds-5.png)
+
+6)  `Verificar se está na VPC correta:`
+
+![aws_doc](png/rds-6.png)
+
+7)  `Selecionar o grupo de segurança do RDS`
+
+![aws_doc](png/rds-7.png)
+
+8)  `Antes de finalizar a criação RDS, definir um nome pro banco de dados inicial e guardar essa informação`
+
+![aws_doc](png/rds-8.png)
+
+9)  `O banco demora bastante pra subir`
+
+![aws_doc](png/rds-9.png)
+
+10- Pegar e armazenar o endereço do banco de dados && o ponto de montagem EFS.
+
+1) `RDS`
+
+![aws_doc](png/peq-1.png)
+
+![aws_doc](png/peq-2.png)
+
+2) `EFS`
+
+![aws_doc](png/peq-3.png)
+
+![aws_doc](png/peq-4.png)
+
+![aws_doc](png/peq-5.png)
+
+11- Alterar esse userdata && o docker-compose.yml para que contenha suas informações
+
+`userdata`
 ```
 #!/bin/bash
 
-echo "Atualizando repositórios e instalando atualizações"
 sudo yum update -y
 
 sudo yum install docker -y
 
 sudo yum install wget -y
 
-sudo yum install curl -y
-
 sudo yum install amazon-efs-utils -y
 
-echo "Repositórios e atualizações instalados"
- 
-echo "Habilitando Docker como serviço e passando usuário pro grupo docker"
 sudo service docker start
 sudo systemctl enable docker.service
 sudo usermod -aG docker ec2-user
-echo "Docker habilitado e usuário passado para o grupo docker"
 
-echo "Testando instalação Docker"
 docker --version
-echo "Docker testado"
 
-echo "Instalando Docker compose" 
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-echo "Instalação feita"
 
-echo "Permissionamento do docker-compose sendo executado"
 sudo chmod +x /usr/local/bin/docker-compose
-echo "Permisisonamento feito"
 
-echo "Criação de pasta wordpress"
-sudo mkdir wordpress
-echo "Pasta criada COM SUCESSO"
+sudo mkdir pastadesuapreferencia <<<<<< escolher um nome melhor
 
-echo "MONTAGEM SENDO FEITA NO EFS"
-sudo mount -t efs -o tls fs-06887e858d43acc91:/ wordpress
-echo "MONTAGEM FEITA COM SUCESSO"
+sudo mount -t efs -o tls fs-0a69c979ffa96bd6a:/ pastadesuapreferencia <<<<<< colocar seu ponto de montagem aqui
 
-echo "Requisitando arquivo docker-compose.yml"
-wget https://raw.githubusercontent.com/Daijinpala/AVA4_24032025/refs/heads/main/POTATO%20SCRIPT/docker-compose.yml
-echo "Arquivo docker-compose.yml requisitado"
+wget https://raw.githubusercontent.com/Daijinpala/AVA4_24032025/refs/heads/main/POTATO%20SCRIPT/docker-compose.yml <<<<<<< Após salvar o seu docker-compose.yml no github, apertar em RAW e copiar a url da pagina que abrir na frente do wget
 
-echo "Executando docker-compose up"
 cd /home/ec2-user/docker-compose.yml
+
 sudo docker-compose up -d
-echo "Docker compose executado corretamente!"
 ```
 
-![22](png/lt_3.png)
+`docker-compose.yml`
+```
+services:
+  web:
+    image: wordpress
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: seu_endpoint_do_banco_de_dados
+      WORDPRESS_DB_USER: o_usuario_do_seu_rds
+      WORDPRESS_DB_PASSWORD: sua_senha
+      WORDPRESS_DB_NAME: o_nome_da_sua_database
+    volumes:
+      - /home/ec2-user/pastadesuapreferencia:/var/www/html
+    networks:
+      - tunel
 
-8- Faça um `ASG` com o `ALB`
+networks:
+  tunel:
+    driver: bridge
+```
 
-![23](png/asg-1.png)
+12- Criar um Modelo de Execução (Lauch Template)
 
-<hr>
+![aws_doc](png/lt-1.png)
 
-![24](png/asg-2.png)
+1)  `Escolher o linux aws (o userdata que criei só funciona nele)`
 
-<hr>
+![aws_doc](png/lt-2.png)
 
-![25](png/asg-3.png)
-![26](png/asg-3.1.png)
-![27](png/asg-3.2.png)
+![aws_doc](png/lt-3.png)
 
-<hr>
+2)  `Não escolha uma sub-rede especifica e escolha o grupo de segurança criado para os servidores web`
 
-![28](png/asg-4.png)
-![29](png/asg-4.1.png)
-![30](png/asg-4.2.png)
-![31](png/asg-4.3.png)
+![aws_doc](png/lt-4.png)
 
-<hr>
+3)  `Colocar as Tags que a patricia passou nas tags de recurso, nos detalhes avançados colocar o arquivo no user-data (observação: terá que trocar o ponto de montagem pelo que está no seu EFS)`
 
-![31](png/asg-6.png)
+![aws_doc](png/lt-5.png)
 
-<hr>
+13- Criar o ASG com o ALB.
 
-9- Verifique se foi criada as instancias.
+1)  `Colocar um nome && ecolher o launch template que criamos anteriormente`
 
-![32](png/f1.png)
+![aws_doc](png/asg-1.png)
 
-10- Tente acessar o Wordpress pelo IP publico das maquinas.
+2)  `Escolher as subnetes publicas de zonas diferentes para o LT`
 
-EC2 1 IP: 54.86.187.15
+![aws_doc](png/asg-2.png)
 
-![33](png/f2.png)
+3)  `Faça um novo ALB (Se já tiver criado antes é só escolher o que você fez)`
 
-EC2 2 IP: 3.89.221.227
+![aws_doc](png/asg-3.png)
+![aws_doc](png/asg-4.png)
 
-![34](png/f3.png)
+4)  `Troque a quantidade de maquinas mínimas e máximas conforme o pedido do cliente`
 
-11- Tente entrar pelo DNS do `LB`.
+![aws_doc](png/asg-5.png)
 
-![35](png/f4.png)
+5)  `Futuramente você pode trocar a politicá de escalabilidade por uma personalizada do CloudWhatch`
 
-12- Analisar os dados no `CloudWatch`.
+![aws_doc](png/asg-6.png)
 
-![35](png/cloudwatch.png)
+6)  `Habilite o monitoramento do cloudwatch`
+
+![aws_doc](png/asg-7.png)
+
+7)  `Crie uma tag personalizada para saber quais são as instancias criadas pelo asg`
+
+![aws_doc](png/asg-8.png)
+
+8)  `Entre no seu loadbalancer, se você criou ele pelo ASG ele vai vir como padrão o grupo de segurança do seu webserver troque pelo o do ALB criado anteriormente`
+
+![aws_doc](png/rep1.png)
+
+![aws_doc](png/rep2.png)
+
+9)  `Após terminar os testes reduza o numero de maquinas minimas e maximas para 0, ele mesmo vi encerrar as instancias, só que demora`
+
+14- Teste.
+
+1)  `Verifique a criação das ec2 e suas zonas de disponibilidade`
+
+![aws_doc](png/tess1.png)
+
+2)  `Cole o user-data e execute ele (Ele não está executando pelo userdata más executa com a gente fazendo pelo ssh)`
+
+![aws_doc](png/tess2.png)
+
+3)  `Acesse o DNS do seu LB pelo navegador:`
+
+![aws_doc](png/tess3.png)
+
+4)  `Acesse as métricas pelo CloudWatch`
+
+![aws_doc](png/tessfim.png)
 
 </div>
 
-### EFS on Linux
+### EFS ON Linux Manual
 
 <div>
 <details align="left">
