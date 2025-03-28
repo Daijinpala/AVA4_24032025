@@ -494,31 +494,30 @@ networks:
 #!/bin/bash
 
 sudo yum update -y
-
-sudo yum install docker -y
-
-sudo yum install wget -y
-
-sudo yum install amazon-efs-utils -y
+sudo yum install -y docker wget amazon-efs-utils
 
 sudo service docker start
 sudo systemctl enable docker.service
 sudo usermod -aG docker ec2-user
 
-docker --version
-
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-
 sudo chmod +x /usr/local/bin/docker-compose
 
-sudo mkdir pastadesuapreferencia <<<<<< escolher um nome melhor
+sudo mkdir -p /wordpress <<<<<< trocar o nome da pasta pra um de sua vontade
+sudo mount -t efs -o tls fs-0a69c979ffa96bd6a:/ /wordpress  <<<<<<< fazer o mesmo aqui
 
-sudo mount -t efs -o tls fs-0a69c979ffa96bd6a:/ pastadesuapreferencia <<<<<< colocar seu ponto de montagem aqui
+if mountpoint -q /wordpress; then
+    echo "EFS montado com sucesso em /wordpress"
+else
+    echo "Falha ao montar EFS"
+    exit 1
+fi
 
-wget https://raw.githubusercontent.com/Daijinpala/AVA4_24032025/refs/heads/main/POTATO%20SCRIPT/docker-compose.yml <<<<<<< Após salvar o seu docker-compose.yml no github, apertar em RAW e copiar a url da pagina que abrir na frente do wget
+wget -O /home/ec2-user/docker-compose.yml https://raw.githubusercontent.com/Daijinpala/AVA4_24032025/main/POTATO%20SCRIPT/docker-compose.yml
 
-cd /home/ec2-user/docker-compose.yml
+sudo chown ec2-user:ec2-user /home/ec2-user/docker-compose.yml
 
+cd /home/ec2-user
 sudo docker-compose up -d
 ```
 
