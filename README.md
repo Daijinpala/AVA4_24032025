@@ -607,15 +607,11 @@ networks:
 
 ![aws_doc](png/tess1.png)
 
-2)  `Cole o user-data e execute ele (Ele não está executando pelo userdata más executa com a gente fazendo pelo ssh)`
-
-![aws_doc](png/tess2.png)
-
-3)  `Acesse o DNS do seu LB pelo navegador:`
+2)  `Acesse o DNS do seu LB pelo navegador:`
 
 ![aws_doc](png/tess3.png)
 
-4)  `Acesse as métricas pelo CloudWatch`
+3)  `Acesse as métricas pelo CloudWatch`
 
 ![aws_doc](png/tessfim.png)
 
