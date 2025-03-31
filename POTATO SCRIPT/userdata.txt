@@ -13,7 +13,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 sudo mkdir -p /.wordpress
 sudo mount -t efs -o tls fs-02984d62f5e371269:/ /.wordpress
 
-if mountpoint -q /wordpress; then
+if mountpoint -q /.wordpress; then
     echo "EFS montado com sucesso em /wordpress"
 else
     echo "Falha ao montar EFS"
