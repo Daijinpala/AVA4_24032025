@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sudo yum update -y
-sudo yum install -y docker wget amazon-efs-utils
+sudo yum install -y docker wget amazon-efs-utils nfs-utils
 
 sudo service docker start
 sudo systemctl enable docker.service
@@ -9,12 +9,15 @@ sudo usermod -aG docker ec2-user
 
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 sudo mkdir -p /wordpress
 sudo mount -t efs -o tls fs-02984d62f5e371269:/ /wordpress
 
 if mountpoint -q /wordpress; then
     echo "EFS montado com sucesso em /wordpress"
+    # Configurar montagem automática na inicialização
+    echo "fs-02984d62f5e371269:/ /wordpress efs _netdev,tls 0 0" | sudo tee -a /etc/fstab
 else
     echo "Falha ao montar EFS"
     exit 1
@@ -23,6 +26,7 @@ fi
 wget -O /home/ec2-user/docker-compose.yml https://raw.githubusercontent.com/Daijinpala/AVA4_24032025/main/POTATO%20SCRIPT/docker-compose.yml
 
 sudo chown ec2-user:ec2-user /home/ec2-user/docker-compose.yml
+sudo chmod 644 /home/ec2-user/docker-compose.yml
 
 cd /home/ec2-user
 sudo docker-compose up -d
