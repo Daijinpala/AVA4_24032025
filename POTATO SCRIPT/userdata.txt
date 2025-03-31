@@ -17,7 +17,6 @@ if mountpoint -q /wordpress; then
     echo "EFS montado com sucesso em /wordpress"
 else
     echo "Falha ao montar EFS"
-    exit 1
 fi
 
 wget -O /home/ec2-user/docker-compose.yml https://raw.githubusercontent.com/Daijinpala/AVA4_24032025/refs/heads/main/POTATO%20SCRIPT/docker-compose.yml
