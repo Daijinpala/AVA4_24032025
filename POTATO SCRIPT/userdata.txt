@@ -20,7 +20,7 @@ else
     exit 1
 fi
 
-wget -O /home/ec2-user/docker-compose.yml [cole seu raw aqui]
+wget -O /home/ec2-user/docker-compose.yml https://raw.githubusercontent.com/Daijinpala/AVA4_24032025/refs/heads/main/POTATO%20SCRIPT/docker-compose.yml
 sudo chown ec2-user:ec2-user /home/ec2-user/docker-compose.yml
 
 cd /home/ec2-user
