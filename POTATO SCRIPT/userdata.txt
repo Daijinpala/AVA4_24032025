@@ -10,8 +10,8 @@ sudo usermod -aG docker ec2-user
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-sudo mkdir -p /wordpress
-sudo mount -t efs -o tls fs-02984d62f5e371269:/ /wordpress
+sudo mkdir -p /home/ec2-user/wordpress
+sudo mount -t efs -o tls fs-02984d62f5e371269:/ /home/ec2-user/wordpress
 
 if mountpoint -q /wordpress; then
     echo "EFS montado com sucesso em /wordpress"
