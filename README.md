@@ -723,30 +723,26 @@ networks:
 
 ![aws_doc](png/asg-2.1.png)
 
-4)  `Faça um novo ALB (Se já tiver criado antes é só escolher o que você fez)`
+4)  `Caso queira utilizar o ALB`
 
 ![aws_doc](png/asg-3.png)
 ![aws_doc](png/asg-4.png)
 
-5)  `Futuramente você pode trocar a politicá de escalabilidade por uma personalizada do CloudWhatch`
-
-![aws_doc](png/asg-6.png)
-
-6)  `Habilite o monitoramento do cloudwatch`
+5)  `Habilite o monitoramento do cloudwatch`
 
 ![aws_doc](png/asg-7.png)
 
-7)  `Crie uma tag personalizada para saber quais são as instancias criadas pelo asg`
+6)  `Crie uma tag personalizada para saber quais são as instancias criadas pelo asg`
 
 ![aws_doc](png/asg-8.png)
 
-8)  `Caso tenha utilizado o ALB, entre no seu loadbalancer, se você criou ele pelo ASG ele vai vir como padrão o grupo de segurança do seu webserver troque pelo o do ALB criado anteriormente`
+7)  `Caso tenha utilizado o ALB, entre no seu loadbalancer, se você criou ele pelo ASG ele vai vir como padrão o grupo de segurança do seu webserver troque pelo o do ALB criado anteriormente`
 
 ![aws_doc](png/rep1.png)
 
 ![aws_doc](png/rep2.png)
 
-9)  `Após terminar os testes reduza o numero de maquinas minimas e maximas para 0 no ASG (Auto Scaling Group), ele mesmo vai encerrar as instancias, só que demora`
+8)  `Após terminar os testes reduza o numero de maquinas minimas e maximas para 0 no ASG (Auto Scaling Group), ele mesmo vai encerrar as instancias, só que demora`
 
 15- `Aplicando monitoramento e manutenção com o cloudwatch`
 
