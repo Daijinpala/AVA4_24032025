@@ -520,7 +520,7 @@ networks:
 
 ![aws_doc](png/sg_rds-1.png)
 
-![aws_doc](png/sg_rds-2.png)
+![aws_doc](png/sg-rds-2.png)
 
 5- Criar um grupo de segurança para o EFS.
 
@@ -532,7 +532,7 @@ networks:
 
 ![aws_doc](png/sg_alb-1.png)
 
-![aws_doc](png/sg-alb-2.png)
+![aws_doc](png/sg_alb-2.png)
 
 7- Editar o grupo de segurança do WebServer que está vazio (conterá nossa aplicação do wordpress).
 
