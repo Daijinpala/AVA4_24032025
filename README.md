@@ -97,13 +97,21 @@ O projeto consiste em utilizar uma instância na AWS que conterá o Docker (esta
 <details align="left">
     <summary></summary>
 1. Rodar o wordpress local ✅
+  
 2. Criar a VPC, EC2 ✅
+   
 3. Criou o RDS ✅
+   
 4. Instalou o Docker na EC2 ✅
+   
 5. Rodou o Wordpress na EC2 ✅
+   
 6. Criou um script de inicialização no User Data e o testou ✅
+    
 7. Criou o auto-scaling group e balanceador de Carga ✅
+    
 8. Criou regras de scaling ✅
+    
 9. Monitoramento no Cloudwatch ✅
 
 ### Pontos de atenção:
