@@ -528,7 +528,7 @@ networks:
 
 ![aws_doc](png/sg-efs-2.png)
 
-6- Criar um grupo de segurança para o ALB.
+6- Criar um grupo de segurança para o ALB || CLB.
 
 ![aws_doc](png/sg_alb-1.png)
 
