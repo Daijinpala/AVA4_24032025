@@ -256,6 +256,131 @@ volumes:
 ![4](png/posinst.png)
 </div>
 
+### EFS ON Linux Manual
+
+<div>
+<details align="left">
+    <summary></summary>
+
+1- Criar o grupo de segurança para o EFS
+
+![00](png/efs-entrada.png)
+![01](png/efs-saida.png)
+
+2- Criar um EFS.
+
+![02](png/efs-cri-2.png)
+![03](png/efs-cri-2.1.png)
+
+
+<hr>
+
+![04](png/efs-cri-3.png)
+![05](png/efs-cri-fim.png)
+
+<hr>
+3- Montagem manualmente da pasta
+
+![06](png/mount-1.png)
+![07](png/mount-2.png)
+
+4- Entrar na EC2 via ssh
+
+5- Instale os pacotes necessários
+
+Documentação Linux: https://docs.aws.amazon.com/pt_br/efs/latest/ug/using-amazon-efs-utils.html
+Documentação oficial para outras distribuições: https://docs.aws.amazon.com/pt_br/efs/latest/ug/installing-amazon-efs-utils.html (não funciona, testei somente na distribuição do ubuntu)
+
+no `Linux`:
+```
+sudo yum install amazon-efs-utils -y
+```
+
+![08](png/dw-efs.png)
+
+no `Ubuntu`:
+```
+$ sudo apt-get update
+$ sudo apt-get -y install git binutils rustc cargo pkg-config libssl-dev gettext
+$ git clone https://github.com/aws/efs-utils
+$ cd efs-utils
+$ ./build-deb.sh
+$ sudo apt-get -y install ./build/amazon-efs-utils*deb
+```
+
+6- Monte uma pasta
+
+```
+Crie uma pasta para fazer a montagem
+
+mkdir wordpress
+
+Cole o que copiamos do nosso efs para um montagem manual
+
+Exemplo: sudo mount -t efs -o tls fs-06887e858d43acc91:/ wordpress
+```
+
+![09](png/efs-mount-ec2.png)
+
+7- Execute o Wordpress e seja feliz
+
+nano `docker-compose.yml`:
+```
+services:
+  web:
+    image: wordpress
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: 
+      WORDPRESS_DB_USER: flavor
+      WORDPRESS_DB_PASSWORD: 998049352
+      WORDPRESS_DB_NAME: db_projetinho
+    volumes:
+      - /home/ec2-user/wordpress:/var/www/html
+    networks:
+      - tunel
+
+networks:
+  tunel:
+    driver: bridge
+```
+
+comando pra executar o container 
+```
+Linux:
+docker-compose up -d
+
+---------------------------------------------------------
+Ubuntu:
+docker compose up -d
+```
+Antes de executar o wordpress:
+![010](png/teste-efs-1.png)
+
+<hr>
+
+Executando a instalação do wordpress:
+![011](png/PósInst.png)
+
+No monitoramento:
+![012](png/monitoraefs.png)
+
+Conteúdo na pasta:
+![013](png/conteudopasta.png)
+
+- Testando em uma Ec2 em outra região
+
+Adicione a região nas configurações de rede do EFS:
+![014](png/testeec2azB.png)
+
+Após isso é só entrar na outra ec2, criar uma pasta com o mesmo nome e por fim entrar nela e verificar se o conteúdo está lá:
+![015](png/férias.png)
+
+</div>
+
+
 ### Primeira etapa `AWS`: Criação da topologia da rede e seus grupos de segurança com teste sem ALB && ASG.
 
 <div>
@@ -562,7 +687,29 @@ networks:
 
 ![aws_doc](png/lt-5.png)
 
-13- Criar o ASG com o ALB.
+13- Criar um CLB
+
+1)  `Clique em criar um loadbalancer`
+
+![aws_doc](png/clb-1.png)
+
+2)  `Selecione o CLB, note que ele aparce em um neu adicional`
+
+![aws_doc](png/clb-2.png)
+
+3)  `Coloque um nome nele e escolha as subnets que serão responsaveis pelo servidor web`
+
+![aws_doc](png/clb-3.png)
+
+4)  `Altere aonde será feito o teste  de HC (por padrão ele vem como "/index.html")`
+
+![aws_doc](png/clb-4.png)
+
+5)  `Criado com sucesso`
+
+![aws_doc](png/clb-5.png)
+
+14- Criar o ASG com o ALB || CLB.
 
 1)  `Colocar um nome && ecolher o launch template que criamos anteriormente`
 
@@ -572,14 +719,14 @@ networks:
 
 ![aws_doc](png/asg-2.png)
 
-3)  `Faça um novo ALB (Se já tiver criado antes é só escolher o que você fez)`
+3) `utilizando o classic Load Balancer criado anteriormente`
+
+![aws_doc](png/asg-2.1.png)
+
+4)  `Faça um novo ALB (Se já tiver criado antes é só escolher o que você fez)`
 
 ![aws_doc](png/asg-3.png)
 ![aws_doc](png/asg-4.png)
-
-4)  `Troque a quantidade de maquinas mínimas e máximas conforme o pedido do cliente`
-
-![aws_doc](png/asg-5.png)
 
 5)  `Futuramente você pode trocar a politicá de escalabilidade por uma personalizada do CloudWhatch`
 
@@ -593,7 +740,7 @@ networks:
 
 ![aws_doc](png/asg-8.png)
 
-8)  `Entre no seu loadbalancer, se você criou ele pelo ASG ele vai vir como padrão o grupo de segurança do seu webserver troque pelo o do ALB criado anteriormente`
+8)  `Caso tenha utilizado o ALB, entre no seu loadbalancer, se você criou ele pelo ASG ele vai vir como padrão o grupo de segurança do seu webserver troque pelo o do ALB criado anteriormente`
 
 ![aws_doc](png/rep1.png)
 
@@ -601,7 +748,47 @@ networks:
 
 9)  `Após terminar os testes reduza o numero de maquinas minimas e maximas para 0 no ASG (Auto Scaling Group), ele mesmo vai encerrar as instancias, só que demora`
 
-14- Teste.
+15- `Aplicando monitoramento e manutenção com o cloudwatch`
+
+1)  `Selecione o ASG que criamos anteriormente`
+
+![aws_cw](png/cw-1.png)
+
+2)  `Em escalabilidade automática crie uma politica`
+
+![aws_cw](png/cw-3.png)
+
+3)  `Crie ela utilizando a escalabilidade simples, coloque um nome e por fim adicione instancias(estaremos criando uma regra mais a fente que quando a utilização da cpu > 84% ela suba mais duas instancias)`
+
+![aws_cw](png/cw-3.png)
+
+4)  `Agora em cloudwatch e em alarmes, crie um alarme`
+
+![aws_cw](png/cw-4.png)
+
+5)  `Selecione uma métrica`
+
+```
+EC2 > By auto Scaling group > CPUutilization
+```
+
+![aws_cw](png/cw-5.png)
+
+6)  `Defina que se a utilização da cpu estiver acima de 85% de utilização aconteça ele executrá a politica de escalabilidade automatica`
+
+![aws_cw](png/cw-6.png)
+
+7)  `Selecione a politica que criamos no passo 2`
+
+![aws_cw](png/cw-7.png)
+
+8)  `De um nome ao alarme`
+
+![aws_cw](png/cw-8.png)
+
+9)  `FIM`
+
+16- Teste.
 
 1)  `Verifique a criação das ec2 e suas zonas de disponibilidade`
 
@@ -609,134 +796,21 @@ networks:
 
 2)  `Acesse o DNS do seu LB pelo navegador:`
 
-![aws_doc](png/tess3.png)
+![aws_doc](png/tess2.png)
 
 3)  `Acesse as métricas pelo CloudWatch`
 
 ![aws_doc](png/tessfim.png)
 
+4) `Acione o alarme que criamos anteriormente e veja o resultado:`
+
+```
+1- Abra o cloudshell
+
+2-aws cloudwatch set-alarm-state --alarm-name "nome do alarme que criamos" --state-value ALARM --state-reason "motivo do teste"
+```
+
+![aws_doc](png/tess3.png)
+
 </div>
 
-### EFS ON Linux Manual
-
-<div>
-<details align="left">
-    <summary></summary>
-
-1- Criar o grupo de segurança para o EFS
-
-![00](png/efs-entrada.png)
-![01](png/efs-saida.png)
-
-2- Criar um EFS.
-
-![02](png/efs-cri-2.png)
-![03](png/efs-cri-2.1.png)
-
-
-<hr>
-
-![04](png/efs-cri-3.png)
-![05](png/efs-cri-fim.png)
-
-<hr>
-3- Montagem manualmente da pasta
-
-![06](png/mount-1.png)
-![07](png/mount-2.png)
-
-4- Entrar na EC2 via ssh
-
-5- Instale os pacotes necessários
-
-Documentação Linux: https://docs.aws.amazon.com/pt_br/efs/latest/ug/using-amazon-efs-utils.html
-Documentação oficial para outras distribuições: https://docs.aws.amazon.com/pt_br/efs/latest/ug/installing-amazon-efs-utils.html (não funciona, testei somente na distribuição do ubuntu)
-
-no `Linux`:
-```
-sudo yum install amazon-efs-utils -y
-```
-
-![08](png/dw-efs.png)
-
-no `Ubuntu`:
-```
-$ sudo apt-get update
-$ sudo apt-get -y install git binutils rustc cargo pkg-config libssl-dev gettext
-$ git clone https://github.com/aws/efs-utils
-$ cd efs-utils
-$ ./build-deb.sh
-$ sudo apt-get -y install ./build/amazon-efs-utils*deb
-```
-
-6- Monte uma pasta
-
-```
-Crie uma pasta para fazer a montagem
-
-mkdir wordpress
-
-Cole o que copiamos do nosso efs para um montagem manual
-
-Exemplo: sudo mount -t efs -o tls fs-06887e858d43acc91:/ wordpress
-```
-
-![09](png/efs-mount-ec2.png)
-
-7- Execute o Wordpress e seja feliz
-
-nano `docker-compose.yml`:
-```
-services:
-  web:
-    image: wordpress
-    restart: always
-    ports:
-      - "80:80"
-    environment:
-      WORDPRESS_DB_HOST: 
-      WORDPRESS_DB_USER: flavor
-      WORDPRESS_DB_PASSWORD: 998049352
-      WORDPRESS_DB_NAME: db_projetinho
-    volumes:
-      - /home/ec2-user/wordpress:/var/www/html
-    networks:
-      - tunel
-
-networks:
-  tunel:
-    driver: bridge
-```
-
-comando pra executar o container 
-```
-Linux:
-docker-compose up -d
-
----------------------------------------------------------
-Ubuntu:
-docker compose up -d
-```
-Antes de executar o wordpress:
-![010](png/teste-efs-1.png)
-
-<hr>
-
-Executando a instalação do wordpress:
-![011](png/PósInst.png)
-
-No monitoramento:
-![012](png/monitoraefs.png)
-
-Conteúdo na pasta:
-![013](png/conteudopasta.png)
-
-- Testando em uma Ec2 em outra região
-
-Adicione a região nas configurações de rede do EFS:
-![014](png/testeec2azB.png)
-
-Após isso é só entrar na outra ec2, criar uma pasta com o mesmo nome e por fim entrar nela e verificar se o conteúdo está lá:
-![015](png/férias.png)
-
-</div>
