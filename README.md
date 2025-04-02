@@ -526,19 +526,19 @@ networks:
 
 ![aws_doc](png/sg_efs-1.png)
 
-![aws_doc](png/sg_efs-2.png)
+![aws_doc](png/sg-efs-2.png)
 
 6- Criar um grupo de segurança para o ALB.
 
 ![aws_doc](png/sg_alb-1.png)
 
-![aws_doc](png/sg_alb-2.png)
+![aws_doc](png/sg-alb-2.png)
 
 7- Editar o grupo de segurança do WebServer que está vazio (conterá nossa aplicação do wordpress).
 
 ![aws_doc](png/sg_web-1.png)
 
-![aws_doc](png/sg_web-2.png)
+![aws_doc](png/sg-web-2.png)
 
 8- Criar o EFS.
 
