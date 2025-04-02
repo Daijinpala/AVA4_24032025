@@ -1,6 +1,12 @@
 # Projeto:
 
-![1](png/print.png)
+O projeto consiste em utilizar uma instância na AWS que conterá o Docker (estamos usando o contêiner do WordPress), que por sua vez, teremos que fazer uma integração utilizando múltiplos serviços, sendo eles:
+
+- EFS
+- RDS
+- CLB/ALB
+- ASG
+- CloudWatch
 
 ```
 1. Instalação e configuração do DOCKER ou CONTAINERD no host EC2; SEGUIR DESENHO TOPOLOGIA DISPOSTA. `Ponto adicional para o trabalho utilizar a instalação via script deStart Instance (user_data.sh)`
@@ -12,6 +18,9 @@
 4. Configuração do serviço de Load Balancer AWS para a aplicação Wordpress.
 
 ```
+
+![1](png/print.png)
+
 <hr>
 
 ## Aplicações utilizadas:
