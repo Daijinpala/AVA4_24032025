@@ -1,4 +1,7 @@
 # Projeto:
+
+![1](png/print.png)
+
 ```
 1. Instalação e configuração do DOCKER ou CONTAINERD no host EC2; SEGUIR DESENHO TOPOLOGIA DISPOSTA. `Ponto adicional para o trabalho utilizar a instalação via script deStart Instance (user_data.sh)`
 
@@ -81,6 +84,9 @@
 
 ## Estágios do Projeto de forma resumida:
 
+<div>
+<details align="left">
+    <summary></summary>
 1. Rodar o wordpress local ✅
 2. Criar a VPC, EC2 ✅
 3. Criou o RDS ✅
@@ -90,8 +96,6 @@
 7. Criou o auto-scaling group e balanceador de Carga ✅
 8. Criou regras de scaling ✅
 9. Monitoramento no Cloudwatch ✅
-
-![1](png/print.png)
 
 ### Pontos de atenção:
 
@@ -103,6 +107,9 @@
 - Aplicação Wordpress precisa estar rodando na porta 80 ou 8080;
 - Utilizar repositório git para versionamento; 
 - Criar documentação.
+
+</details>
+</div>
 
 ## Conclusão:
 
