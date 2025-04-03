@@ -11,7 +11,7 @@ sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-
 sudo chmod +x /usr/local/bin/docker-compose
 
 sudo mkdir -p /wordpress
-sudo mount -t efs -o tls fs-0c42517803dbdae92:/ /wordpress
+sudo mount -t efs -o tls fs-025a0733bbcbe7eb7:/ /wordpress
 
 if mountpoint -q /wordpress; then
     echo "EFS montado com sucesso em /wordpress"
