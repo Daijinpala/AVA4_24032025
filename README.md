@@ -886,6 +886,7 @@ EC2 > By auto Scaling group > CPUutilization
 2)  `Acesse o DNS do seu LB pelo navegador:`
 
 ![aws_doc](png/tess2.png)
+![aws_doc](png/FIM.png)
 
 3)  `Acesse as métricas pelo CloudWatch`
 
